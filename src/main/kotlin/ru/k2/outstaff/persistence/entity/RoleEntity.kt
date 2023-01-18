@@ -1,5 +1,6 @@
 package ru.k2.outstaff.persistence.entity
 
+import org.hibernate.annotations.ColumnDefault
 import org.hibernate.annotations.CreationTimestamp
 import java.time.LocalDateTime
 import javax.persistence.*
@@ -19,6 +20,9 @@ class RoleEntity(
     @Column(name = "d_date")
     @CreationTimestamp
     var date: LocalDateTime? = null,
+
+    @Column(name = "n_delete")
+    var deleted: Int = 0,
 
     @Column(name = "c_comment")
     var comment: String? = null,

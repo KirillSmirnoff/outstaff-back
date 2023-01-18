@@ -80,6 +80,8 @@ insert into roles (c_role_name) values ('ADMIN');
 insert into roles ( c_role_name) values ('BOSS');
 insert into roles ( c_role_name) values ('TEST');
 
+
+Alter table roles add column n_delete smallint not null default 1;
 -- ==================================================================
 
 drop table if exists users_roles;

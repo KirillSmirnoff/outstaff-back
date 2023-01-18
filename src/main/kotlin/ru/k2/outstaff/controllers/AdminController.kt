@@ -1,82 +1,49 @@
 package ru.k2.outstaff.controllers
 
-import org.springframework.stereotype.Controller
-import org.springframework.ui.Model
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import ru.k2.outstaff.persistence.RoleRepository
-import ru.k2.outstaff.persistence.UserRepository
-import ru.k2.outstaff.persistence.dto.UserRoleDto
-import ru.k2.outstaff.persistence.entity.RoleEntity
+import org.springframework.http.HttpStatus
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.*
+import ru.k2.outstaff.persistence.dto.roles.RoleCreateRequest
+import ru.k2.outstaff.persistence.dto.roles.RoleDto
+import ru.k2.outstaff.persistence.dto.users.UserRoleDto
+import ru.k2.outstaff.persistence.dto.users.UserCreateRequest
 import ru.k2.outstaff.service.RoleService
 import ru.k2.outstaff.service.UserRoleService
 import ru.k2.outstaff.service.UserService
 
-@Controller
+@RestController
 @RequestMapping("/admin")
-class AdminController(private val userRepository: UserRepository,
-                      private val roleRepository: RoleRepository,
-                      private val roleService: RoleService,
+class AdminController(private val roleService: RoleService,
                       private val userService: UserService,
                       private val userRoleService: UserRoleService) {
 
-    @GetMapping("/home")
-    fun admin(): String {
-
-        return "admin"
+    @GetMapping("/roles")
+    fun getRoles(@RequestParam(defaultValue = "false") isDeleted: Boolean): ResponseEntity<List<RoleDto>>{
+        val roles = roleService.findRoles(isDeleted)
+        return ResponseEntity.ok(roles)
     }
 
     @GetMapping("/users")
-    fun getUsers(model: Model): String{
-
+    fun getUsers(): ResponseEntity<List<UserRoleDto>> {
         val all = userService.getAllUsersWithRoles()
-
-        model.addAttribute("users", all)
-
-        return "admin-user"
+        return ResponseEntity.ok(all)
     }
 
-    @GetMapping("/user/register")
-    fun userRegisterForm(model: Model): String {
-        val roles = roleService.findRoles()
-
-        model.addAttribute("roles", roles)
-        model.addAttribute("user", UserRoleDto())
-
-        return "user-register"
-    }
-
-    @PostMapping("/user/register")
-    fun userRegister(roleDto: UserRoleDto): String {
-
+    @PostMapping("/user")
+    @ResponseStatus(HttpStatus.CREATED)
+    fun userRegister(@RequestBody roleDto: UserCreateRequest) {
         userRoleService.saveUser(roleDto)
-
-        return "redirect:/admin/users"
     }
 
-    @GetMapping("/roles")
-    fun getRoles(model: Model): String{
-        val roles = roleService.findRoles()
-
-        model.addAttribute("roles",roles )
-
-        return "admin-role"
+    @PostMapping("/role")
+    @ResponseStatus(HttpStatus.CREATED)
+    fun roleRegister(@RequestBody newRole: RoleCreateRequest){
+        roleService.saveRole(newRole)
     }
 
-    @GetMapping("role/register")
-    fun roleRegisterForm(model: Model): String{
-
-        model.addAttribute("role", RoleEntity())
-
-        return "role-register"
-    }
-
-    @PostMapping("role/register")
-    fun registerRole(roleEntity: RoleEntity): String{
-
-        roleService.saveRole(roleEntity)
-
-        return "redirect:/admin/roles"
+    @DeleteMapping("/role/{roleId}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    fun removeRole(@PathVariable("roleId") roleId: String){
+        roleService.remove(roleId)
     }
 }

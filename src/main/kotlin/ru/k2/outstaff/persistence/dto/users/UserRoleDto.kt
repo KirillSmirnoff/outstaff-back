@@ -1,4 +1,4 @@
-package ru.k2.outstaff.persistence.dto
+package ru.k2.outstaff.persistence.dto.users
 
 data class UserRoleDto(
         var id: Long? = null,

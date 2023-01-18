@@ -2,8 +2,7 @@ package ru.k2.outstaff.service
 
 import org.springframework.stereotype.Service
 import ru.k2.outstaff.persistence.UserRepository
-import ru.k2.outstaff.persistence.dto.UserRoleDto
-import ru.k2.outstaff.persistence.entity.UserEntity
+import ru.k2.outstaff.persistence.dto.users.UserRoleDto
 import java.util.stream.Collectors
 import javax.transaction.Transactional
 
@@ -19,6 +18,7 @@ class UserService(private val userRepository: UserRepository) {
             val userRoleDto = UserRoleDto().apply {
                 id = user.id
                 userName = user.username
+                password = "*****"
                 login = user.login
                 phone = user.phone
                 mail = user.mail
