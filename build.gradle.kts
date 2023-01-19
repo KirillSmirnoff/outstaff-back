@@ -1,5 +1,4 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-//import java.io.File
 
 plugins {
     id("org.springframework.boot") version "2.5.1"
@@ -14,23 +13,18 @@ group = "ru.k2"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_11
 
-//ext {
-//    var database = org.gradle.internal.impldep.org.yaml.snakeyaml.Yaml()
-//            .loadAll(File("application.yml").inputStream()).first()
-//}
-
-//driver, class path, URL, and user authentication information
 liquibase {
     activities.register("main") {
-        this.arguments = kotlin.collections.hashMapOf(
-//                "logLevel" to "info",
-                "changeLogFile" to "src/main/resources/db/changelog.yml",
-                "url" to "jdbc:postgresql://localhost:5432/univer",
+        this.arguments = mapOf(
+                "logLevel" to "info",
+                "changeLogFile" to "src/main/resources/db/generated/generated_changelog.postgres.sql",
+                "url" to "jdbc:postgresql://localhost:5432/hh",
                 "username" to "postgres",
                 "password" to "0",
                 "driver" to "org.postgresql.Driver"
         )
     }
+    runList = "main"
 }
 
 repositories {
@@ -61,11 +55,12 @@ dependencies {
     implementation( "org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("org.postgresql:postgresql")
     /**LIQUIBASE*/
+    implementation("org.liquibase:liquibase-core:4.16.1")
+    /**LIQUIBASE-PLUGIN*/
     liquibaseRuntime("org.liquibase:liquibase-core:4.16.1")
     liquibaseRuntime("org.liquibase:liquibase-groovy-dsl:3.0.0")
     liquibaseRuntime("info.picocli:picocli:4.6.1")
     liquibaseRuntime("org.postgresql:postgresql")
-
     /**TEST*/
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
