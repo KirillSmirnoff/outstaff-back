@@ -9,4 +9,7 @@ interface RoleRepository: JpaRepository<RoleEntity, Long> {
 
     @Query("select r from RoleEntity r where r.roleName in :roleName")
     fun findByName(@Param(value = "roleName") name: List<String>):List<RoleEntity>
+
+    //используем @NamedQuery(name = "RoleEntity.findAll")
+    fun findAll(@Param("deleted") deleted: Int):List<RoleEntity>
 }

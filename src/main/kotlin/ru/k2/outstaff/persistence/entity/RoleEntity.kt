@@ -1,9 +1,11 @@
 package ru.k2.outstaff.persistence.entity
 
-import org.hibernate.annotations.ColumnDefault
 import org.hibernate.annotations.CreationTimestamp
 import java.time.LocalDateTime
 import javax.persistence.*
+
+@NamedQuery(name = "RoleEntity.findAll",
+        query = "select r from RoleEntity r where r.deleted <= :deleted")
 
 @Entity
 @Table(name = "roles")

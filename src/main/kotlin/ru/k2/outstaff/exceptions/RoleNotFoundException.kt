@@ -1,4 +1,4 @@
 package ru.k2.outstaff.exceptions
 
-class RoleNotFoundException : RuntimeException() {
+class RoleNotFoundException(s: String) : RuntimeException(s) {
 }
