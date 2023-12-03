@@ -9,6 +9,7 @@ import ru.k2.outstaff.persistence.dto.roles.RoleDto
 import ru.k2.outstaff.persistence.dto.roles.RoleUpdateRequest
 import ru.k2.outstaff.persistence.dto.users.UserCreateRequest
 import ru.k2.outstaff.persistence.dto.users.UserRoleDto
+import ru.k2.outstaff.persistence.dto.users.UserUpdateRequest
 import ru.k2.outstaff.service.RoleService
 import ru.k2.outstaff.service.UserRoleService
 import ru.k2.outstaff.service.UserService
@@ -21,15 +22,15 @@ class AdminController(private val roleService: RoleService,
                       private val userRoleService: UserRoleService) {
 
     @GetMapping("/roles")
-    fun getRoles(@RequestParam(defaultValue = "false") isDeleted: Boolean): ResponseEntity<List<RoleDto>>{
-        val roles = roleService.findRoles(isDeleted)
+    fun getRoles(@RequestParam(defaultValue = "false") deleted: Boolean): ResponseEntity<List<RoleDto>>{
+        val roles = roleService.getAll(deleted)
         return ResponseEntity.ok(roles)
     }
 
     @PostMapping("/role")
     @ResponseStatus(HttpStatus.CREATED)
     fun roleRegister(@RequestBody newRole: RoleCreateRequest){
-        roleService.saveRole(newRole)
+        roleService.save(newRole)
     }
 
     @DeleteMapping("/role/{roleId}")
@@ -45,26 +46,27 @@ class AdminController(private val roleService: RoleService,
     }
 
     @GetMapping("/users")
-    fun getUsers(): ResponseEntity<List<UserRoleDto>> {
-        val all = userService.getAllUsersWithRoles()
+    fun getUsers(@RequestParam(defaultValue = "false") deleted: Boolean ): ResponseEntity<List<UserRoleDto>> {
+        val all = userService.getUsersWithRoles(deleted)
         return ResponseEntity.ok(all)
     }
 
     @PostMapping("/user")
     @ResponseStatus(HttpStatus.CREATED)
     fun userRegister(@RequestBody roleDto: UserCreateRequest) {
-        userRoleService.saveUser(roleDto)
+        userRoleService.createUser(roleDto)
     }
 
     @DeleteMapping("/user/{userId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    fun removeUser(@PathVariable("userId") userId: String){
+    fun removeUser(@PathVariable("userId") userId: Long){
         userRoleService.removeUser(userId)
     }
 
     @PutMapping("/user/{userId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
-    fun updateUser(@PathVariable("userId") roleId: String, @RequestBody updateRole: RoleUpdateRequest){
+    fun updateUser(@PathVariable("userId") roleId: Long, @RequestBody userUpdateRequest: UserUpdateRequest){
+        userRoleService.updateUser(roleId, userUpdateRequest)
 //        roleService.update(roleId, updateRole)
     }
 
