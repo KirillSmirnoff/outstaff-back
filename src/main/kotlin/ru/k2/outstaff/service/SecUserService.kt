@@ -8,13 +8,12 @@ import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.stereotype.Service
 import ru.k2.outstaff.persistence.UserRepository
-import ru.k2.outstaff.persistence.entity.UserEntity
 import java.util.stream.Collectors
 
 @Service
 class SecUserService(private val userRepository: UserRepository) : UserDetailsService {
 
-    private fun loadByName(username: String?): UserEntity {
+    private fun loadByName(username: String?): ru.k2.outstaff.persistence.entity.User {
         return if (username != null) userRepository.findByName(username) else throw UsernameNotFoundException("Пользователь $username не найден !")
     }
 
@@ -24,8 +23,8 @@ class SecUserService(private val userRepository: UserRepository) : UserDetailsSe
         return User(userEntity.username, userEntity.passsword, mapRolesToAuthorities(userEntity))
     }
 
-    private fun mapRolesToAuthorities(userEntity: UserEntity): Collection<GrantedAuthority?>? {
-        val roles = userEntity.userRole
+    private fun mapRolesToAuthorities(userEntity: ru.k2.outstaff.persistence.entity.User): Collection<GrantedAuthority?>? {
+        val roles = userEntity.userRoles
 
         return if (roles != null) roles.stream()
                 .map { r -> SimpleGrantedAuthority(r.role?.roleName) }

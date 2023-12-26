@@ -7,5 +7,6 @@ data class UserRoleDto(
         var password: String? = null,
         var phone: String? = null,
         var mail: String? = null,
+        var status: String? = null,
         var roles: List<String>? = null
 )

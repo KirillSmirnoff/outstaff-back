@@ -7,14 +7,15 @@ import ru.k2.outstaff.persistence.RoleRepository
 import ru.k2.outstaff.persistence.dto.roles.RoleCreateRequest
 import ru.k2.outstaff.persistence.dto.roles.RoleDto
 import ru.k2.outstaff.persistence.dto.roles.RoleUpdateRequest
-import ru.k2.outstaff.persistence.entity.RoleEntity
+import ru.k2.outstaff.persistence.entity.Role
+import ru.k2.outstaff.utils.Util
 import java.time.LocalDateTime
 
 @Service
 class RoleService(private val roleRepository: RoleRepository,
                   @Lazy private val loadService: LoadService) {
 
-    fun findRoles(isDeleted: Boolean): MutableList<RoleDto> {
+    fun getAll(isDeleted: Boolean): MutableList<RoleDto> {
         val listOfRoles = mutableListOf<RoleDto>()
         val deleted = if (isDeleted) 1 else 0
 
@@ -22,7 +23,7 @@ class RoleService(private val roleRepository: RoleRepository,
         for (role in findAll) {
 //            if (role.deleted <= deleted) {
                 listOfRoles.add(
-                        RoleDto(role.id!!, role.roleName!!, role.date!!, role.deleted!!
+                        RoleDto(role.id!!, role.roleName!!, role.date!!, role.deleted
                         ).apply { comment = role.comment }
                 )
 //            }
@@ -30,8 +31,8 @@ class RoleService(private val roleRepository: RoleRepository,
         return listOfRoles
     }
 
-    fun saveRole(newRole: RoleCreateRequest) {
-        val newRoleEntity = RoleEntity().apply {
+    fun save(newRole: RoleCreateRequest) {
+        val newRoleEntity = Role().apply {
             roleName = newRole.roleName.toUpperCase()
             comment = if (newRole.comment.isNullOrEmpty()) "" else newRole.comment
         }
@@ -62,5 +63,28 @@ class RoleService(private val roleRepository: RoleRepository,
             }.also { roleRepository.saveAndFlush(it) }
             loadService.loadRoles()
         } else throw RoleNotFoundException("Role with id [$roleId] not found.")
+    }
+
+
+    /***
+     * Проеряет что переданная роль валидна.
+     * В случае пустой роли, пользователь создается с ролью MANAGER.
+     */
+    fun getRoles(roles: List<String>?): List<Role> {
+        return if (!roles.isNullOrEmpty()) {
+            checkRoles(roles) //необходимо замнить на аннотацию
+            roleRepository.findByName(roles)
+        } else roleRepository.findByName(mutableListOf("MANAGER")) // нужно создавать не MANAGER а пользователя без прав
+    }
+
+    /**
+     * Проверяет что роли имеются в системе
+     * @see LoadService
+     */
+    private fun checkRoles(roles: List<String>) {
+        for (role in roles) {
+            if (!Util.roles.contains(role))
+                throw RoleNotFoundException("Role $role not found or disabled")
+        }
     }
 }

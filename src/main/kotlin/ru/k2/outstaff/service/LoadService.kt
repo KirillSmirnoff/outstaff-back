@@ -16,7 +16,7 @@ class LoadService(private var roleService: RoleService) {
     }
 
     fun loadRoles(){
-        Util.roles = roleService.findRoles(false).stream()
+        Util.roles = roleService.getAll(false).stream()
                 .collect(Collectors.toUnmodifiableMap(RoleDto::roleName, RoleDto::roleName))
     }
 }

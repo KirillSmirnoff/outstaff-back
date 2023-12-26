@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import ru.k2.outstaff.persistence.*
-import ru.k2.outstaff.persistence.entity.RoleEntity
-import ru.k2.outstaff.persistence.entity.UserEntity
-import ru.k2.outstaff.persistence.entity.UserRoleEntity
+import ru.k2.outstaff.persistence.entity.Role
+import ru.k2.outstaff.persistence.entity.User
+import ru.k2.outstaff.persistence.entity.UserRole
 import javax.transaction.Transactional
 
 @SpringBootTest
@@ -37,13 +37,13 @@ class RepositoryTest
 
     @Test
     fun `test user roles`(){
-        val userEntity = UserEntity().apply {
+        val userEntity = User().apply {
             username = "Вован Петрович Жук"
             login = "wow"
             passsword = "0"
         }
 
-        val roleEntity = RoleEntity().apply {
+        val roleEntity = Role().apply {
             roleName = "TEST"
         }
 
@@ -52,7 +52,7 @@ class RepositoryTest
 
 
 
-        val usersRoleEntity = UserRoleEntity().apply {
+        val usersRoleEntity = UserRole().apply {
             user = userEntity
             role = roleEntity
         }
@@ -64,7 +64,7 @@ class RepositoryTest
     fun `find user by name`(){
         val user = userRepository.findByName("wow")
 
-        val usersRole = user.userRole
+        val usersRole = user.userRoles
         println(usersRole?.get(0)?.role?.roleName)
 
         Assertions.assertTrue("Вован Петрович Жук".equals(user.username))
@@ -82,7 +82,7 @@ class RepositoryTest
         val users = userRepository.findAll()
         for (user in users) {
 //            for (userRole in user.userRole!!) {
-                println("User: ${user.username} has role ${user.userRole}")
+                println("User: ${user.username} has role ${user.userRoles}")
 //            }
         }
     }

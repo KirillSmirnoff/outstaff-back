@@ -15,7 +15,9 @@ spring:
     url: 'jdbc:postgresql://localhost:5432/hh'
   jpa:
     open-in-view: false
-    show-sql: true
     hibernate:
       ddl-auto: validate
+    properties.hibernate:
+      show_sql: true
+      format_sql: true
 

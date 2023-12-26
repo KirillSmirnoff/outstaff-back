@@ -4,7 +4,7 @@ import org.springframework.stereotype.Service
 import ru.k2.outstaff.persistence.CompanyRepository
 import ru.k2.outstaff.persistence.WorkerRepository
 import ru.k2.outstaff.persistence.dto.WorkerDto
-import ru.k2.outstaff.persistence.entity.WorkerEntity
+import ru.k2.outstaff.persistence.entity.Worker
 import java.time.LocalDate
 
 @Service
@@ -17,7 +17,7 @@ class WorkerService(
 
         val company = companyRepository.findByName(workerDto.company!!)
 
-        val workerEntity = WorkerEntity().apply {
+        val workerEntity = Worker().apply {
             name = workerDto.name
             birthday = LocalDate.parse(workerDto.bithday)
             phone = workerDto.phone
@@ -29,6 +29,6 @@ class WorkerService(
         workerRepository.saveAndFlush(workerEntity)
     }
 
-    fun getAllWorkers(): MutableList<WorkerEntity> = workerRepository.findAll()
+    fun getAllWorkers(): MutableList<Worker> = workerRepository.findAll()
 
 }
