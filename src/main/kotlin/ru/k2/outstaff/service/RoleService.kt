@@ -10,6 +10,7 @@ import ru.k2.outstaff.persistence.dto.roles.RoleUpdateRequest
 import ru.k2.outstaff.persistence.entity.Role
 import ru.k2.outstaff.utils.Util
 import java.time.LocalDateTime
+import java.util.stream.Collectors
 
 @Service
 class RoleService(private val roleRepository: RoleRepository,
@@ -77,14 +78,22 @@ class RoleService(private val roleRepository: RoleRepository,
         } else roleRepository.findByName(mutableListOf("MANAGER")) // нужно создавать не MANAGER а пользователя без прав
     }
 
+    fun getRolesByIds(roleIds: List<Long?>): List<Role> {
+            return roleRepository.findByIds(roleIds)
+    }
+
     /**
      * Проверяет что роли имеются в системе
      * @see LoadService
      */
-    private fun checkRoles(roles: List<String>) {
-        for (role in roles) {
-            if (!Util.roles.contains(role))
-                throw RoleNotFoundException("Role $role not found or disabled")
-        }
+    fun checkRoles(roles: List<String>): List<Long?> {
+//        for (role in roles) {
+//            if (!Util.roles.contains(role))
+//                throw RoleNotFoundException("Role $role not found or disabled")
+//        }
+        return roles.stream()
+                .filter { role -> Util.roles.containsKey(role) }
+                .map { role -> Util.roles[role] }
+                .collect(Collectors.toList())
     }
 }

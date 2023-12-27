@@ -11,5 +11,5 @@ data class UserCreateRequest
         val phone: String?,
         val mail: String?,
         @JsonDeserialize(using = UpperCaseDeserializer::class)
-        val roles: List<String>?
+        val roles: List<String>
 )

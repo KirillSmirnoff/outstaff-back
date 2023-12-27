@@ -11,15 +11,13 @@ import ru.k2.outstaff.persistence.dto.users.UserCreateRequest
 import ru.k2.outstaff.persistence.dto.users.UserRoleDto
 import ru.k2.outstaff.persistence.dto.users.UserUpdateRequest
 import ru.k2.outstaff.service.RoleService
-import ru.k2.outstaff.service.UserRoleService
 import ru.k2.outstaff.service.UserService
 
 @RestController
 @RequestMapping("/admin")
 @Validated
 class AdminController(private val roleService: RoleService,
-                      private val userService: UserService,
-                      private val userRoleService: UserRoleService) {
+                      private val userService: UserService) {
 
     @GetMapping("/roles")
     fun getRoles(@RequestParam(defaultValue = "false") deleted: Boolean): ResponseEntity<List<RoleDto>>{
@@ -54,20 +52,19 @@ class AdminController(private val roleService: RoleService,
     @PostMapping("/user")
     @ResponseStatus(HttpStatus.CREATED)
     fun userRegister(@RequestBody roleDto: UserCreateRequest) {
-        userRoleService.createUser(roleDto)
+        userService.createUser(roleDto) //todo return user_id
     }
 
     @DeleteMapping("/user/{userId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     fun removeUser(@PathVariable("userId") userId: Long){
-        userRoleService.removeUser(userId)
+        userService.removeUser(userId)
     }
 
     @PutMapping("/user/{userId}")
     @ResponseStatus(HttpStatus.ACCEPTED)
     fun updateUser(@PathVariable("userId") roleId: Long, @RequestBody userUpdateRequest: UserUpdateRequest){
-        userRoleService.updateUser(roleId, userUpdateRequest)
-//        roleService.update(roleId, updateRole)
+        userService.updateUser(roleId, userUpdateRequest)
     }
 
 

@@ -10,5 +10,5 @@ data class UserUpdateRequest
         val mail: String?,
         var deleted: Int?,
         @JsonDeserialize(using = UpperCaseDeserializer::class)
-        val roles: ArrayList<String>?
+        val roles: ArrayList<String>
 )
