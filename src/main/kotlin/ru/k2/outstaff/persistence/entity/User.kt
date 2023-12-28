@@ -36,6 +36,6 @@ class User(
 
         @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
         @BatchSize(size = 5)
-        var userRoles: MutableSet<UserRole>? = null
+        var userRoles: MutableList<UserRole>? = null
 
 )
