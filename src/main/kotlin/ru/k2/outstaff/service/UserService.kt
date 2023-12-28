@@ -64,10 +64,10 @@ class UserService(private val userRepository: UserRepository,
         val roles = roleService.getRolesByIds(listRoleIDs)
         for (curRole in roles) {
                 val userRole = UserRole().apply {
-                    user = saveUser
-                    role = curRole
+                    this.setUsers(saveUser)
+                    this.setRoles(curRole)
                 }
-                usersRoleRepository.saveAndFlush(userRole) //todo из цикла убрать
+                usersRoleRepository.save(userRole)
             }
     }
 
@@ -94,7 +94,7 @@ class UserService(private val userRepository: UserRepository,
                 .map { role -> role.id }
                 .collect(Collectors.toList())
 
-        usersRoleRepository.deleteByIds(listUserRolesIds) //todo подумать что бы не удалялись а зменялись
+        usersRoleRepository.deleteByIds(listUserRolesIds)
 
         for (role in rolesForUpdate) { //todo нужно улучшить запросов чтолько же скольк в цикле записей
             val userRole = UserRole().apply {

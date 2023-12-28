@@ -52,7 +52,7 @@ class AdminController(private val roleService: RoleService,
     @PostMapping("/user")
     @ResponseStatus(HttpStatus.CREATED)
     fun userRegister(@RequestBody roleDto: UserCreateRequest) {
-        userService.createUser(roleDto) //todo return user_id
+        userService.createUser(roleDto)
     }
 
     @DeleteMapping("/user/{userId}")
