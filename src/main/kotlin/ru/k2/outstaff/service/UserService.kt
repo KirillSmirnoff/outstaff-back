@@ -27,22 +27,16 @@ class UserService(private val userRepository: UserRepository,
         val users = userRepository.findAll(isDeleted)
 
         for (user in users) {
-            val userRoleDto = UserRoleDto().apply {
-                id = user.id
-                userName = user.username
-                password = "*****"
-                login = user.login
-                phone = user.phone
-                mail = user.mail
-                status = if (user.deleted > 0) "REMOVED" else "ACTIVE"
-                roles = user.userRoles!!.stream()
-                        .map { r -> r.role!!.roleName }
-                        .collect(Collectors.toList()) as List<String>?
-            }
+            val userRoleDto = mapUserToUserRoleDto(user)
             mutableList.add(userRoleDto)
         }
-
         return mutableList
+    }
+
+    @Transactional
+    fun getUser(id: Long): UserRoleDto{
+        val user = userRepository.getById(id)
+        return mapUserToUserRoleDto(user)
     }
 
     @Transactional
@@ -112,5 +106,20 @@ class UserService(private val userRepository: UserRepository,
         }
 
         userRepository.saveAndFlush(updatedUser)
+    }
+
+    private fun mapUserToUserRoleDto(user: User): UserRoleDto {
+        return UserRoleDto().apply {
+            id = user.id
+            userName = user.username
+            password = "*****"
+            login = user.login
+            phone = user.phone
+            mail = user.mail
+            status = if (user.deleted > 0) "REMOVED" else "ACTIVE"
+            roles = user.userRoles!!.stream()
+                    .map { r -> r.role!!.roleName }
+                    .collect(Collectors.toList()) as List<String>?
+        }
     }
 }

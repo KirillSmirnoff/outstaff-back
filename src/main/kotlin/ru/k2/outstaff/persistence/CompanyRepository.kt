@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository
 import ru.k2.outstaff.persistence.entity.Company
 
 @Repository
-interface CompanyRepository : JpaRepository<Company, Int>{
+interface CompanyRepository : JpaRepository<Company, Long>{
 
     @Query("select c from Company c where c.companyName = :companyName")
     fun findByName(@Param("companyName") companyName: String): Company

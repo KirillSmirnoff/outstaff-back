@@ -2,6 +2,7 @@ package ru.k2.outstaff.service
 
 import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import ru.k2.outstaff.exceptions.RoleNotFoundException
 import ru.k2.outstaff.persistence.RoleRepository
 import ru.k2.outstaff.persistence.dto.roles.RoleCreateRequest
@@ -87,13 +88,16 @@ class RoleService(private val roleRepository: RoleRepository,
      * @see LoadService
      */
     fun checkRoles(roles: List<String>): List<Long?> {
-//        for (role in roles) {
-//            if (!Util.roles.contains(role))
-//                throw RoleNotFoundException("Role $role not found or disabled")
-//        }
         return roles.stream()
                 .filter { role -> Util.roles.containsKey(role) }
                 .map { role -> Util.roles[role] }
                 .collect(Collectors.toList())
+    }
+
+    @Transactional
+    fun getRole(id: Long): RoleDto {
+        val role = roleRepository.getById(id)
+        return RoleDto(role.id!!, role.roleName!!, role.date!!, role.deleted
+        ).apply { comment = role.comment }
     }
 }

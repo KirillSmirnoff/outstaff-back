@@ -25,6 +25,12 @@ class AdminController(private val roleService: RoleService,
         return ResponseEntity.ok(roles)
     }
 
+    @GetMapping("/role/{roleId}")
+    fun getRole(@PathVariable("roleId") id: Long): ResponseEntity<RoleDto>{
+        val role = roleService.getRole(id)
+        return ResponseEntity.ok(role)
+    }
+
     @PostMapping("/role")
     @ResponseStatus(HttpStatus.CREATED)
     fun roleRegister(@RequestBody newRole: RoleCreateRequest){
@@ -47,6 +53,12 @@ class AdminController(private val roleService: RoleService,
     fun getUsers(@RequestParam(defaultValue = "false") deleted: Boolean ): ResponseEntity<List<UserRoleDto>> {
         val all = userService.getUsersWithRoles(deleted)
         return ResponseEntity.ok(all)
+    }
+
+    @GetMapping("/user/{userId}")
+    fun getUser(@PathVariable("userId") id: Long): ResponseEntity<UserRoleDto>{
+        val user = userService.getUser(id)
+        return ResponseEntity.ok(user)
     }
 
     @PostMapping("/user")
