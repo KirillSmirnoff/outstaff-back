@@ -1,5 +1,6 @@
 package ru.k2.outstaff.persistence.entity
 
+import ru.k2.outstaff.utils.WorkerType
 import java.time.LocalDate
 import java.util.*
 import javax.persistence.*
@@ -7,6 +8,7 @@ import javax.persistence.*
 @Entity
 @Table(name = "workers")
 class Worker(
+
         @Id
         @GeneratedValue(strategy = GenerationType.IDENTITY)
         @Column(name = "n_id")
@@ -28,9 +30,10 @@ class Worker(
         var status: Boolean? = null,
 
         @Column(name = "n_type")
-        var type: String? = null,
+        @Enumerated(EnumType.STRING)
+        var type: WorkerType? = null,
 
         @ManyToOne
         @JoinColumn(name = "n_company_id")
-        var companyId: Company? = null,
+        var company: Company? = null,
 )

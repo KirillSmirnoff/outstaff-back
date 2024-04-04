@@ -11,8 +11,8 @@ create table workers
     b_status   boolean default true
 );
 
-insert into workers (n_name, d_birthday, c_phone, c_mail,  n_company_id)
-VALUES ('Крирлл', '03.07.1990', '+99362534073', 'k2@mail.ru', 1);
+insert into workers (n_name, d_birthday, c_phone, c_mail,  n_company_id, n_type)
+VALUES ('Крирлл', '03.07.1990', '+99362534073', 'k2@mail.ru', 1, 'RVP');
 
 insert into workers (n_name, d_birthday, c_phone, c_mail,  n_company_id)
 VALUES ('Саид', '03.07.1990', '+99362534073', 'said@mail.ru', 3);

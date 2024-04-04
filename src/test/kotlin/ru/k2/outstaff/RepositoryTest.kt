@@ -26,7 +26,7 @@ class RepositoryTest
 
     @Test
     fun `test workerRepository`() {
-        workerRepository.findAll().forEach { wrk -> println(wrk.companyId?.companyName) }
+        workerRepository.findAll().forEach { wrk -> println(wrk.company?.companyName) }
     }
 
     @Test

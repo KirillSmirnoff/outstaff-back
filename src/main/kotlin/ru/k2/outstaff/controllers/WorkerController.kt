@@ -1,28 +1,34 @@
 package ru.k2.outstaff.controllers
 
-import org.springframework.stereotype.Controller
-import org.springframework.ui.Model
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestMapping
-import ru.k2.outstaff.persistence.dto.WorkerDto
+import org.springframework.http.HttpStatus
+import org.springframework.web.bind.annotation.*
+import ru.k2.outstaff.persistence.dto.worker.WorkerCreateRequest
+import ru.k2.outstaff.persistence.dto.worker.WorkerDto
 import ru.k2.outstaff.service.WorkerService
 
-@Controller
+@RestController
 @RequestMapping("/worker")
 class WorkerController(private val workerService: WorkerService) {
 
-    @GetMapping("/register")
-    fun workerRegisterForm(model: Model): String{
-        model.addAttribute("worker",WorkerDto())
-        return "worker-register"
+    @GetMapping("/manage/{userId}")
+    fun getWorkers(@PathVariable("userId") userId: Long) {
+        workerService.getWorkersByUserId(userId)
     }
 
-    @PostMapping("/register")
-    fun workerRegister(workerDto: WorkerDto): String{
+    @GetMapping("/{workerId}")
+    fun getWorker(@PathVariable("workerId") workerId: Long): WorkerDto {
+        return workerService.getWorker(workerId)
+    }
 
-        workerService.saveWorker(workerDto)
+    @DeleteMapping("/{workerId}")
+    @ResponseStatus(HttpStatus.ACCEPTED)
+    fun deleteWorker(@PathVariable("workerId") workerId: Long) {
+        return workerService.deleteWorker(workerId)
+    }
 
-        return "redirect:/"
+    @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
+    fun createWorker(@RequestBody request: WorkerCreateRequest){
+        workerService.createWorker(request)
     }
 }
