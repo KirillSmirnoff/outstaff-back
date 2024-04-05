@@ -5,9 +5,9 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import ru.k2.outstaff.exceptions.RoleNotFoundException
 import ru.k2.outstaff.persistence.RoleRepository
-import ru.k2.outstaff.persistence.dto.roles.RoleCreateRequest
-import ru.k2.outstaff.persistence.dto.roles.RoleDto
-import ru.k2.outstaff.persistence.dto.roles.RoleUpdateRequest
+import ru.k2.outstaff.dto.roles.RoleCreateRequest
+import ru.k2.outstaff.dto.roles.RoleDto
+import ru.k2.outstaff.dto.roles.RoleUpdateRequest
 import ru.k2.outstaff.persistence.entity.Role
 import ru.k2.outstaff.utils.Util
 import java.time.LocalDateTime

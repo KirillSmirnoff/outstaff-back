@@ -1,4 +1,4 @@
-package ru.k2.outstaff.persistence.dto.roles
+package ru.k2.outstaff.dto.roles
 
 import java.time.LocalDateTime
 

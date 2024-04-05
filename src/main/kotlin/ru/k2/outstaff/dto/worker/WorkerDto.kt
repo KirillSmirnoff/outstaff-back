@@ -1,12 +1,15 @@
-package ru.k2.outstaff.persistence.dto.worker
+package ru.k2.outstaff.dto.worker
 
+import ru.k2.outstaff.persistence.entity.Company
 import java.time.LocalDate
 
-data class WorkerCreateRequest(
+data class WorkerDto
+(
         var name: String? = null,
         var bithday: LocalDate? = null,
         var phone: String? = null,
         var mail: String? = null,
+        var status: Boolean? = null,
         var type: String? = null,
-        var company: String? = null
+        var company: Company? = null,
 )

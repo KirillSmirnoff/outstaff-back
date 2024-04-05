@@ -6,9 +6,9 @@ import ru.k2.outstaff.exceptions.RoleNotFoundException
 import ru.k2.outstaff.exceptions.UserNotFoundException
 import ru.k2.outstaff.persistence.UserRepository
 import ru.k2.outstaff.persistence.UsersRoleRepository
-import ru.k2.outstaff.persistence.dto.users.UserCreateRequest
-import ru.k2.outstaff.persistence.dto.users.UserRoleDto
-import ru.k2.outstaff.persistence.dto.users.UserUpdateRequest
+import ru.k2.outstaff.dto.users.UserCreateRequest
+import ru.k2.outstaff.dto.users.UserRoleDto
+import ru.k2.outstaff.dto.users.UserUpdateRequest
 import ru.k2.outstaff.persistence.entity.User
 import ru.k2.outstaff.persistence.entity.UserRole
 import java.util.stream.Collectors

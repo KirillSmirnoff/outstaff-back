@@ -2,17 +2,18 @@ package ru.k2.outstaff.controllers
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
-import ru.k2.outstaff.persistence.dto.worker.WorkerCreateRequest
-import ru.k2.outstaff.persistence.dto.worker.WorkerDto
+import ru.k2.outstaff.dto.company.CompanyDto
+import ru.k2.outstaff.dto.worker.WorkerCreateRequest
+import ru.k2.outstaff.dto.worker.WorkerDto
 import ru.k2.outstaff.service.WorkerService
 
 @RestController
 @RequestMapping("/worker")
 class WorkerController(private val workerService: WorkerService) {
 
-    @GetMapping("/manage/{userId}")
-    fun getWorkers(@PathVariable("userId") userId: Long) {
-        workerService.getWorkersByUserId(userId)
+    @GetMapping()
+    fun getWorkers(): List<WorkerDto> {
+        return workerService.getWorkers()
     }
 
     @GetMapping("/{workerId}")
@@ -20,8 +21,12 @@ class WorkerController(private val workerService: WorkerService) {
         return workerService.getWorker(workerId)
     }
 
+    @PutMapping("/{workerId}")
+    fun updateWorker(@PathVariable("workerId") workerId: Long, @RequestBody worker: WorkerCreateRequest){
+        workerService.updateWorker(workerId, worker)
+    }
+
     @DeleteMapping("/{workerId}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
     fun deleteWorker(@PathVariable("workerId") workerId: Long) {
         return workerService.deleteWorker(workerId)
     }

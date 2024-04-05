@@ -1,15 +1,14 @@
-package ru.k2.outstaff.persistence.dto.users
+package ru.k2.outstaff.dto.users
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import ru.k2.outstaff.support.UpperCaseDeserializer
 
-data class UserCreateRequest
+data class UserUpdateRequest
 (
         val userName: String,
-        val login: String,
-        val password: String,
         val phone: String?,
         val mail: String?,
+        var deleted: Int?,
         @JsonDeserialize(using = UpperCaseDeserializer::class)
-        val roles: List<String>
+        val roles: ArrayList<String>
 )

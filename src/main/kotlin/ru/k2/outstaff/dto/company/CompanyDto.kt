@@ -1,4 +1,4 @@
-package ru.k2.outstaff.persistence.dto.company
+package ru.k2.outstaff.dto.company
 
 data class CompanyDto
 (

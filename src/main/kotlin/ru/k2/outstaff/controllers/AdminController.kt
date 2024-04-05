@@ -4,12 +4,12 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
-import ru.k2.outstaff.persistence.dto.roles.RoleCreateRequest
-import ru.k2.outstaff.persistence.dto.roles.RoleDto
-import ru.k2.outstaff.persistence.dto.roles.RoleUpdateRequest
-import ru.k2.outstaff.persistence.dto.users.UserCreateRequest
-import ru.k2.outstaff.persistence.dto.users.UserRoleDto
-import ru.k2.outstaff.persistence.dto.users.UserUpdateRequest
+import ru.k2.outstaff.dto.roles.RoleCreateRequest
+import ru.k2.outstaff.dto.roles.RoleDto
+import ru.k2.outstaff.dto.roles.RoleUpdateRequest
+import ru.k2.outstaff.dto.users.UserCreateRequest
+import ru.k2.outstaff.dto.users.UserRoleDto
+import ru.k2.outstaff.dto.users.UserUpdateRequest
 import ru.k2.outstaff.service.RoleService
 import ru.k2.outstaff.service.UserService
 
@@ -48,6 +48,9 @@ class AdminController(private val roleService: RoleService,
     fun updateRole(@PathVariable("roleId") roleId: String, @RequestBody updateRole: RoleUpdateRequest){
         roleService.update(roleId, updateRole)
     }
+
+
+//   --------------- users -------------------
 
     @GetMapping("/users")
     fun getUsers(@RequestParam(defaultValue = "false") deleted: Boolean ): ResponseEntity<List<UserRoleDto>> {
