@@ -38,12 +38,13 @@ class CompanyService(val companyRepository: CompanyRepository) {
     }
 
     @Transactional
-    fun createCompany(company: CompanyRequest) {
-        companyRepository.save(
-                Company().apply {
+    fun createCompany(company: CompanyRequest): CompanyDto {
+        return mapCompanyDto(
+                companyRepository.save(Company().apply {
                     this.companyName = company.companyName
                     this.additional = company.additional
                 })
+        )
     }
 
     fun deleteCompany(id: Long) {
@@ -51,11 +52,19 @@ class CompanyService(val companyRepository: CompanyRepository) {
     }
 
     @Transactional
-    fun updateCompany(id: Long, updateCompany: CompanyRequest) {
+    fun updateCompany(id: Long, updateCompany: CompanyRequest): CompanyDto {
         val company = companyRepository.getById(id)
         company.companyName = updateCompany.companyName
         company.additional = updateCompany.additional
 
-        companyRepository.save(company)
+       return mapCompanyDto(companyRepository.save(company))
+    }
+
+    fun mapCompanyDto(company: Company): CompanyDto {
+        return CompanyDto().apply {
+            this.id = company.id
+            this.companyName = company.companyName
+            this.additional = company.additional
+        }
     }
 }

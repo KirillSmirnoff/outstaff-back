@@ -30,7 +30,7 @@ class WorkerService(
     }
 
     @Transactional
-    fun createWorker(workerCreateRequest: WorkerCreateRequest) {
+    fun createWorker(workerCreateRequest: WorkerCreateRequest): WorkerDto {
         val company = companyRepository.findByName(
                 workerCreateRequest.company!!
         ).orElseGet { throw WorkerNotFoundException() }
@@ -44,7 +44,7 @@ class WorkerService(
             this.company = company
         }
 
-        workerRepository.save(worker)
+        return mapWorkerDto(workerRepository.save(worker))
     }
 
     fun deleteWorker(workerId: Long) {
@@ -53,6 +53,7 @@ class WorkerService(
 
     fun mapWorkerDto(worker: Worker): WorkerDto {
         return WorkerDto().apply {
+            this.id = worker.id
             this.name = worker.name
             this.bithday = worker.birthday
             this.phone = worker.phone
@@ -63,7 +64,7 @@ class WorkerService(
         }
     }
 
-    fun updateWorker(workerId: Long, updateWorker: WorkerCreateRequest) {
+    fun updateWorker(workerId: Long, updateWorker: WorkerCreateRequest): WorkerDto {
         val originWorker = workerRepository.findById(workerId)
                 .orElseThrow { throw WorkerNotFoundException()}
 
@@ -77,7 +78,7 @@ class WorkerService(
         originWorker.type = WorkerType.valueOf(updateWorker.type!!)
         originWorker.company = company
 
-        workerRepository.save(originWorker)
+       return mapWorkerDto(workerRepository.save(originWorker))
 
     }
 

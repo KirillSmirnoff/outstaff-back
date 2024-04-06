@@ -5,6 +5,7 @@ import java.time.LocalDate
 
 data class WorkerDto
 (
+        var id: Long? = null,
         var name: String? = null,
         var bithday: LocalDate? = null,
         var phone: String? = null,

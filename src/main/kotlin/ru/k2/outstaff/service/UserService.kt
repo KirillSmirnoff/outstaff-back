@@ -40,7 +40,7 @@ class UserService(private val userRepository: UserRepository,
     }
 
     @Transactional
-    fun createUser(newUserRequest: UserCreateRequest) {
+    fun createUser(newUserRequest: UserCreateRequest): Long {
         // Проеряем что переданная роль валидна.
         val listRoleIDs = roleService.checkRoles(newUserRequest.roles)
         if (listRoleIDs.isNullOrEmpty())
@@ -61,8 +61,9 @@ class UserService(private val userRepository: UserRepository,
                     this.setUsers(saveUser)
                     this.setRoles(curRole)
                 }
-                usersRoleRepository.save(userRole)
-            }
+            usersRoleRepository.save(userRole)
+        }
+        return saveUser.id!!
     }
 
     @Transactional
@@ -72,16 +73,18 @@ class UserService(private val userRepository: UserRepository,
     }
 
     @Transactional
-    fun updateUser(userId: Long, updateUser: UserUpdateRequest) {
+    fun updateUser(userId: Long, updateUser: UserUpdateRequest): UserRoleDto {
         val listRoleIDs = roleService.checkRoles(updateUser.roles)
         if (listRoleIDs.isNullOrEmpty())
             throw RoleNotFoundException("role ${updateUser.roles} does not exist")
 
-        userRepository.findById(userId)
-                .ifPresentOrElse({ processUpdateUser(it, updateUser, listRoleIDs) }, { throw UserNotFoundException("User with id [$userId] not found.") })
+        val user = userRepository.findById(userId)
+                .orElseThrow { UserNotFoundException("User with id [$userId] not found.") }
+
+        return mapUserToUserRoleDto(processUpdateUser(user, updateUser, listRoleIDs))
     }
 
-    private fun processUpdateUser(user: User, updateUser: UserUpdateRequest, listRoleIDs: List<Long?>) {
+    private fun processUpdateUser(user: User, updateUser: UserUpdateRequest, listRoleIDs: List<Long?>): User {
         val rolesForUpdate = roleService.getRolesByIds(listRoleIDs)
 
         val listUserRolesIds = user.userRoles!!.stream()
@@ -105,7 +108,7 @@ class UserService(private val userRepository: UserRepository,
             deleted = updateUser.deleted ?: deleted
         }
 
-        userRepository.saveAndFlush(updatedUser)
+        return userRepository.saveAndFlush(updatedUser)
     }
 
     private fun mapUserToUserRoleDto(user: User): UserRoleDto {

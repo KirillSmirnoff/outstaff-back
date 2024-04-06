@@ -38,4 +38,8 @@ class User(
         @BatchSize(size = 5)
         var userRoles: MutableList<UserRole>? = null
 
-)
+){
+        fun setUserRoles(userRole: UserRole){
+                userRoles?.add(userRole)
+        }
+}

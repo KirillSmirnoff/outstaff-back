@@ -20,66 +20,69 @@ class AdminController(private val roleService: RoleService,
                       private val userService: UserService) {
 
     @GetMapping("/roles")
-    fun getRoles(@RequestParam(defaultValue = "false") deleted: Boolean): ResponseEntity<List<RoleDto>>{
+    fun listRoles(@RequestParam(defaultValue = "false") deleted: Boolean): ResponseEntity<List<RoleDto>> {
         val roles = roleService.getAll(deleted)
         return ResponseEntity.ok(roles)
     }
 
     @GetMapping("/role/{roleId}")
-    fun getRole(@PathVariable("roleId") id: Long): ResponseEntity<RoleDto>{
+    fun getRole(@PathVariable("roleId") id: Long): ResponseEntity<RoleDto> {
         val role = roleService.getRole(id)
         return ResponseEntity.ok(role)
     }
 
     @PostMapping("/role")
-    @ResponseStatus(HttpStatus.CREATED)
-    fun roleRegister(@RequestBody newRole: RoleCreateRequest){
-        roleService.save(newRole)
+    fun createRole(@RequestBody newRole: RoleCreateRequest): ResponseEntity<RoleDto> {
+        val role = roleService.save(newRole)
+        return ResponseEntity(role, HttpStatus.CREATED)
     }
 
     @DeleteMapping("/role/{roleId}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    fun removeRole(@PathVariable("roleId") roleId: String){
+    @ResponseStatus(HttpStatus.OK)
+    fun deleteRole(@PathVariable("roleId") roleId: String) {
         roleService.remove(roleId)
     }
 
     @PutMapping("/role/{roleId}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    fun updateRole(@PathVariable("roleId") roleId: String, @RequestBody updateRole: RoleUpdateRequest){
-        roleService.update(roleId, updateRole)
+    fun updateRole(@PathVariable("roleId") roleId: String,
+                   @RequestBody updateRole: RoleUpdateRequest): ResponseEntity<RoleDto> {
+        val role = roleService.update(roleId, updateRole)
+        return ResponseEntity.ok(role)
     }
 
 
 //   --------------- users -------------------
 
     @GetMapping("/users")
-    fun getUsers(@RequestParam(defaultValue = "false") deleted: Boolean ): ResponseEntity<List<UserRoleDto>> {
-        val all = userService.getUsersWithRoles(deleted)
-        return ResponseEntity.ok(all)
+    fun listUsers(@RequestParam(defaultValue = "false") deleted: Boolean): ResponseEntity<List<UserRoleDto>> {
+        val users = userService.getUsersWithRoles(deleted)
+        return ResponseEntity.ok(users)
     }
 
     @GetMapping("/user/{userId}")
-    fun getUser(@PathVariable("userId") id: Long): ResponseEntity<UserRoleDto>{
+    fun getUser(@PathVariable("userId") id: Long): ResponseEntity<UserRoleDto> {
         val user = userService.getUser(id)
         return ResponseEntity.ok(user)
     }
 
     @PostMapping("/user")
-    @ResponseStatus(HttpStatus.CREATED)
-    fun userRegister(@RequestBody roleDto: UserCreateRequest) {
-        userService.createUser(roleDto)
+    fun createUser(@RequestBody roleDto: UserCreateRequest): ResponseEntity<UserRoleDto> {
+        val userId = userService.createUser(roleDto)
+        val user = userService.getUser(userId)
+        return ResponseEntity(user, HttpStatus.CREATED)
     }
 
     @DeleteMapping("/user/{userId}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    fun removeUser(@PathVariable("userId") userId: Long){
+    @ResponseStatus(HttpStatus.OK)
+    fun deleteUser(@PathVariable("userId") userId: Long) {
         userService.removeUser(userId)
     }
 
     @PutMapping("/user/{userId}")
-    @ResponseStatus(HttpStatus.ACCEPTED)
-    fun updateUser(@PathVariable("userId") roleId: Long, @RequestBody userUpdateRequest: UserUpdateRequest){
-        userService.updateUser(roleId, userUpdateRequest)
+    fun updateUser(@PathVariable("userId") roleId: Long,
+                   @RequestBody userUpdateRequest: UserUpdateRequest): ResponseEntity<UserRoleDto> {
+        val user = userService.updateUser(roleId, userUpdateRequest)
+        return ResponseEntity.ok(user)
     }
 
 

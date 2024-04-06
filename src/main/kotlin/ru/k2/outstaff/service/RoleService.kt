@@ -33,14 +33,16 @@ class RoleService(private val roleRepository: RoleRepository,
         return listOfRoles
     }
 
-    fun save(newRole: RoleCreateRequest) {
+    fun save(newRole: RoleCreateRequest): RoleDto {
         val newRoleEntity = Role().apply {
             roleName = newRole.roleName.toUpperCase()
             comment = if (newRole.comment.isNullOrEmpty()) "" else newRole.comment
         }
-        roleRepository.saveAndFlush(newRoleEntity)
+        val role = roleRepository.saveAndFlush(newRoleEntity)
 
         loadService.loadRoles()
+
+        return RoleDto(role.id!!, role.roleName!!, role.date!!, role.deleted, role.comment)
     }
 
     fun remove(roleId: String){
@@ -54,17 +56,22 @@ class RoleService(private val roleRepository: RoleRepository,
         }
     }
 
-    fun update(roleId: String, updateRole: RoleUpdateRequest) {
+    fun update(roleId: String, updateRole: RoleUpdateRequest): RoleDto {
         val role = roleRepository.findById(roleId.toLong())
-        if (role.isPresent) {
-            role.get().apply {
-                this.comment = updateRole.comment
-                this.date = LocalDateTime.now()
-                this.deleted = updateRole.deleted!!
-                this.roleName = updateRole.roleName
-            }.also { roleRepository.saveAndFlush(it) }
-            loadService.loadRoles()
-        } else throw RoleNotFoundException("Role with id [$roleId] not found.")
+                .orElseThrow { throw RoleNotFoundException("Role with id [$roleId] not found.") }
+
+        role.apply {
+            this.comment = updateRole.comment
+            this.date = LocalDateTime.now()
+            this.deleted = updateRole.deleted!!
+            this.roleName = updateRole.roleName
+        }
+
+        val updatedRole = roleRepository.save(role)
+        loadService.loadRoles()
+
+        return RoleDto(updatedRole.id!!, updatedRole.roleName!!, updatedRole.date!!, updatedRole.deleted)
+                .apply { comment = updatedRole.comment }
     }
 
 
