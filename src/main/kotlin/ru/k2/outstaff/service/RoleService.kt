@@ -18,19 +18,18 @@ class RoleService(private val roleRepository: RoleRepository,
                   @Lazy private val loadService: LoadService) {
 
     fun getAll(isDeleted: Boolean): MutableList<RoleDto> {
-        val listOfRoles = mutableListOf<RoleDto>()
         val deleted = if (isDeleted) 1 else 0
 
-        val findAll = roleRepository.findAll(deleted)
-        for (role in findAll) {
-//            if (role.deleted <= deleted) {
-                listOfRoles.add(
-                        RoleDto(role.id!!, role.roleName!!, role.date!!, role.deleted
-                        ).apply { comment = role.comment }
-                )
-//            }
-        }
-        return listOfRoles
+        return roleRepository.findAll().stream()
+                .filter { r -> r.deleted <= deleted }
+                .map { r -> mapRoleDto(r) }
+                .collect(Collectors.toList())
+    }
+
+    @Transactional
+    fun getRole(id: Long): RoleDto {
+        return roleRepository.getById(id)
+                .let { mapRoleDto(it) }
     }
 
     fun save(newRole: RoleCreateRequest): RoleDto {
@@ -74,20 +73,8 @@ class RoleService(private val roleRepository: RoleRepository,
                 .apply { comment = updatedRole.comment }
     }
 
-
-    /***
-     * Проеряет что переданная роль валидна.
-     * В случае пустой роли, пользователь создается с ролью MANAGER.
-     */
-    fun getRoles(roles: List<String>?): List<Role> {
-        return if (!roles.isNullOrEmpty()) {
-            checkRoles(roles) //необходимо замнить на аннотацию
-            roleRepository.findByName(roles)
-        } else roleRepository.findByName(mutableListOf("MANAGER")) // нужно создавать не MANAGER а пользователя без прав
-    }
-
     fun getRolesByIds(roleIds: List<Long?>): List<Role> {
-            return roleRepository.findByIds(roleIds)
+        return roleRepository.findByIdIn(roleIds)
     }
 
     /**
@@ -101,10 +88,9 @@ class RoleService(private val roleRepository: RoleRepository,
                 .collect(Collectors.toList())
     }
 
-    @Transactional
-    fun getRole(id: Long): RoleDto {
-        val role = roleRepository.getById(id)
+    private fun mapRoleDto(role: Role): RoleDto {
         return RoleDto(role.id!!, role.roleName!!, role.date!!, role.deleted
         ).apply { comment = role.comment }
     }
+
 }

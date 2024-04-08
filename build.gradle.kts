@@ -40,11 +40,6 @@ allOpen {
 dependencies {
     /**WEB*/
     implementation("org.springframework.boot:spring-boot-starter-web")
-    implementation("org.springframework.boot:spring-boot-starter-thymeleaf")
-    /**FRONTend*/
-//    implementation("org.webjars:jquery:3.5.1")
-//    implementation("org.webjars:bootstrap:4.6.0")
-//    implementation("org.webjars:popper.js:1.16.0")
     /**KOTLIN*/
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
@@ -64,8 +59,6 @@ dependencies {
     /**TEST*/
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.springframework.security:spring-security-test")
-    /**MISC*/
-    developmentOnly("org.springframework.boot:spring-boot-devtools")
 }
 
 tasks.withType<KotlinCompile> {

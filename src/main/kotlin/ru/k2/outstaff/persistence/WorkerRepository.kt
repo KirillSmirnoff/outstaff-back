@@ -5,8 +5,4 @@ import org.springframework.stereotype.Repository
 import ru.k2.outstaff.persistence.entity.Worker
 
 @Repository
-interface WorkerRepository : JpaRepository<Worker, Long> {
-
-//    @Query("select w from Worker w where ")
-//    fun getWorkersByUserId(userId: Long)
-}
+interface WorkerRepository : JpaRepository<Worker, Long>

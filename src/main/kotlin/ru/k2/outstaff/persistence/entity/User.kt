@@ -3,10 +3,6 @@ package ru.k2.outstaff.persistence.entity
 import org.hibernate.annotations.BatchSize
 import javax.persistence.*
 
-@NamedQuery(name = "User.findAll",
-//        query = "select u from UserEntity u join fetch u.userRole where u.deleted <= :deleted")
-        query = "select u from User u where u.deleted <= :deleted")
-
 @Entity
 @Table(name = "users")
 class User(
@@ -38,8 +34,4 @@ class User(
         @BatchSize(size = 5)
         var userRoles: MutableList<UserRole>? = null
 
-){
-        fun setUserRoles(userRole: UserRole){
-                userRoles?.add(userRole)
-        }
-}
+)

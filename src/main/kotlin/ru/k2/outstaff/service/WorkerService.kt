@@ -18,9 +18,9 @@ class WorkerService(
 ) {
 
     fun getWorkers(): List<WorkerDto> {
-         return workerRepository.findAll().stream()
-                .map{ mapWorkerDto(it) }
-                 .collect(Collectors.toList())
+        return workerRepository.findAll().stream()
+                .map { mapWorkerDto(it) }
+                .collect(Collectors.toList())
     }
 
     fun getWorker(workerId: Long): WorkerDto {
@@ -31,9 +31,8 @@ class WorkerService(
 
     @Transactional
     fun createWorker(workerCreateRequest: WorkerCreateRequest): WorkerDto {
-        val company = companyRepository.findByName(
-                workerCreateRequest.company!!
-        ).orElseGet { throw WorkerNotFoundException() }
+        val company = companyRepository.findByCompanyName(workerCreateRequest.company!!)
+                .orElseGet { throw WorkerNotFoundException() }
 
         val worker = Worker().apply {
             this.name = workerCreateRequest.name
@@ -51,6 +50,24 @@ class WorkerService(
         workerRepository.deleteById(workerId)
     }
 
+    @Transactional
+    fun updateWorker(workerId: Long, updateWorker: WorkerCreateRequest): WorkerDto {
+        val worker = workerRepository.findById(workerId)
+                .orElseThrow { throw WorkerNotFoundException()}
+
+        val company = companyRepository.findByCompanyName(updateWorker.company!!)
+                .orElseThrow { throw WorkerNotFoundException() }
+
+        worker.name = updateWorker.name
+        worker.birthday = updateWorker.bithday
+        worker.mail = updateWorker.mail
+        worker.phone = updateWorker.phone
+        worker.type = WorkerType.valueOf(updateWorker.type!!)
+        worker.company = company
+
+       return mapWorkerDto(workerRepository.save(worker))
+    }
+
     fun mapWorkerDto(worker: Worker): WorkerDto {
         return WorkerDto().apply {
             this.id = worker.id
@@ -62,24 +79,6 @@ class WorkerService(
             this.type = worker.type.toString()
             this.company = worker.company
         }
-    }
-
-    fun updateWorker(workerId: Long, updateWorker: WorkerCreateRequest): WorkerDto {
-        val originWorker = workerRepository.findById(workerId)
-                .orElseThrow { throw WorkerNotFoundException()}
-
-        val company = companyRepository.findByName(updateWorker.company!!)
-                .orElseThrow { throw WorkerNotFoundException() }
-
-        originWorker.name = updateWorker.name
-        originWorker.birthday = updateWorker.bithday
-        originWorker.mail = updateWorker.mail
-        originWorker.phone = updateWorker.phone
-        originWorker.type = WorkerType.valueOf(updateWorker.type!!)
-        originWorker.company = company
-
-       return mapWorkerDto(workerRepository.save(originWorker))
-
     }
 
 }

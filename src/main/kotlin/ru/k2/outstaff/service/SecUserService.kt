@@ -14,7 +14,7 @@ import java.util.stream.Collectors
 class SecUserService(private val userRepository: UserRepository) : UserDetailsService {
 
     private fun loadByName(username: String?): ru.k2.outstaff.persistence.entity.User {
-        return if (username != null) userRepository.findByName(username) else throw UsernameNotFoundException("Пользователь $username не найден !")
+        return if (username != null) userRepository.findByLogin(username) else throw UsernameNotFoundException("Пользователь $username не найден !")
     }
 
     override fun loadUserByUsername(username: String?): UserDetails {

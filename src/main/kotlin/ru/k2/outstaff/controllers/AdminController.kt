@@ -55,7 +55,7 @@ class AdminController(private val roleService: RoleService,
 
     @GetMapping("/users")
     fun listUsers(@RequestParam(defaultValue = "false") deleted: Boolean): ResponseEntity<List<UserRoleDto>> {
-        val users = userService.getUsersWithRoles(deleted)
+        val users = userService.getUsers(deleted)
         return ResponseEntity.ok(users)
     }
 

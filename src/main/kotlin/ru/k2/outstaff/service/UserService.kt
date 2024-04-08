@@ -21,25 +21,21 @@ class UserService(private val userRepository: UserRepository,
                   private val usersRoleRepository: UsersRoleRepository) {
 
     @Transactional
-    fun getUsersWithRoles(deleted: Boolean): MutableList<UserRoleDto> {
-        val mutableList = mutableListOf<UserRoleDto>()
+    fun getUsers(deleted: Boolean): MutableList<UserRoleDto> {
         val isDeleted = if (deleted) 1 else 0
-        val users = userRepository.findAll(isDeleted)
 
-        for (user in users) {
-            val userRoleDto = mapUserToUserRoleDto(user)
-            mutableList.add(userRoleDto)
-        }
-        return mutableList
+        return userRepository.findAll().stream()
+                .filter { u -> u.deleted <= isDeleted }
+                .map { u -> mapUserToUserRoleDto(u) }
+                .collect(Collectors.toList())
     }
 
     @Transactional
     fun getUser(id: Long): UserRoleDto{
-        val user = userRepository.getById(id)
-        return mapUserToUserRoleDto(user)
+        return mapUserToUserRoleDto(userRepository.getById(id))
     }
 
-    @Transactional
+    @Transactional //todo переделать
     fun createUser(newUserRequest: UserCreateRequest): Long {
         // Проеряем что переданная роль валидна.
         val listRoleIDs = roleService.checkRoles(newUserRequest.roles)
@@ -67,12 +63,6 @@ class UserService(private val userRepository: UserRepository,
     }
 
     @Transactional
-    fun removeUser(userId: Long){
-        println("Start remove user with id - $userId")
-        userRepository.removeById(userId)
-    }
-
-    @Transactional
     fun updateUser(userId: Long, updateUser: UserUpdateRequest): UserRoleDto {
         val listRoleIDs = roleService.checkRoles(updateUser.roles)
         if (listRoleIDs.isNullOrEmpty())
@@ -84,22 +74,29 @@ class UserService(private val userRepository: UserRepository,
         return mapUserToUserRoleDto(processUpdateUser(user, updateUser, listRoleIDs))
     }
 
-    private fun processUpdateUser(user: User, updateUser: UserUpdateRequest, listRoleIDs: List<Long?>): User {
-        val rolesForUpdate = roleService.getRolesByIds(listRoleIDs)
+    @Transactional
+    fun removeUser(userId: Long){
+        println("Start remove user with id - $userId")
+        userRepository.removeById(userId)
+    }
 
+    private fun processUpdateUser(user: User, updateUser: UserUpdateRequest, listRoleIDs: List<Long?>): User {
         val listUserRolesIds = user.userRoles!!.stream()
                 .map { role -> role.id }
                 .collect(Collectors.toList())
 
-        usersRoleRepository.deleteByIds(listUserRolesIds)
+        user.userRoles!!.clear()
+        usersRoleRepository.deleteByIdIn(listUserRolesIds)
 
-        for (role in rolesForUpdate) { //todo нужно улучшить запросов чтолько же скольк в цикле записей
-            val userRole = UserRole().apply {
-                this.user = user
-                this.role = role
-            }
-            usersRoleRepository.save(userRole)
-        }
+        val userRoles = roleService.getRolesByIds(listRoleIDs).stream()
+                .map {
+                    UserRole().apply {
+                        this.setUsers(user)
+                        this.setRoles(it)
+                    }
+                }.collect(Collectors.toList())
+
+        usersRoleRepository.saveAll(userRoles)
 
         val updatedUser = user.apply {
             username = updateUser.userName

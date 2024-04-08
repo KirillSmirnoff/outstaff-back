@@ -4,9 +4,6 @@ import org.hibernate.annotations.CreationTimestamp
 import java.time.LocalDateTime
 import javax.persistence.*
 
-@NamedQuery(name = "Role.findAll",
-        query = "select r from Role r where r.deleted <= :deleted")
-
 @Entity
 @Table(name = "roles")
 class Role(

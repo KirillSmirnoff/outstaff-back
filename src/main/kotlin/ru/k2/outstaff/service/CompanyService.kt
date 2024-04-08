@@ -14,30 +14,19 @@ class CompanyService(val companyRepository: CompanyRepository) {
 
 
     fun getCompanyById(id: Long): CompanyDto {
-        return companyRepository.findById(id).map {
-            CompanyDto().apply {
-                this.id = it.id
-                this.companyName = it.companyName
-                this.additional = it.additional
-            }
-        }.orElseGet { throw CompanyNotFoundException() }
+        return companyRepository.findById(id)
+                .map {c -> mapCompanyDto(c)}
+                .orElseGet { throw CompanyNotFoundException() }
     }
 
     fun getAll(): List<CompanyDto> {
         return companyRepository.findAll()
                 .stream()
-                .map {
-                    CompanyDto().apply {
-                        this.id = it.id
-                        this.companyName = it.companyName
-                        this.additional = it.additional
-                    }
-                }
+                .map { c -> mapCompanyDto(c) }
                 .collect(Collectors.toList())
                 .orEmpty()
     }
 
-    @Transactional
     fun createCompany(company: CompanyRequest): CompanyDto {
         return mapCompanyDto(
                 companyRepository.save(Company().apply {
