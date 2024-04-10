@@ -26,37 +26,33 @@ class RoleService(private val roleRepository: RoleRepository,
                 .collect(Collectors.toList())
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     fun getRole(id: Long): RoleDto {
         return roleRepository.getById(id)
                 .let { mapRoleDto(it) }
     }
 
+    @Transactional
     fun save(newRole: RoleCreateRequest): RoleDto {
         val newRoleEntity = Role().apply {
             roleName = newRole.roleName.toUpperCase()
             comment = if (newRole.comment.isNullOrEmpty()) "" else newRole.comment
         }
-        val role = roleRepository.saveAndFlush(newRoleEntity)
+        val role = roleRepository.save(newRoleEntity)
 
-        loadService.loadRoles()
+//        loadService.loadRoles()
 
         return RoleDto(role.id!!, role.roleName!!, role.date!!, role.deleted, role.comment)
     }
 
-    fun remove(roleId: String){
-        val role = roleRepository.findById(roleId.toLong())
-        if(role.isPresent){
-            val roleEntity = role.get()
-            roleEntity.deleted = 1
-            roleRepository.saveAndFlush(roleEntity)
-
-            loadService.loadRoles()
-        }
+    @Transactional
+    fun remove(roleId: Long){
+        roleRepository.deleteById(roleId)
+//        loadService.loadRoles()
     }
 
-    fun update(roleId: String, updateRole: RoleUpdateRequest): RoleDto {
-        val role = roleRepository.findById(roleId.toLong())
+    fun update(roleId: Long, updateRole: RoleUpdateRequest): RoleDto {
+        val role = roleRepository.findById(roleId)
                 .orElseThrow { throw RoleNotFoundException("Role with id [$roleId] not found.") }
 
         role.apply {
@@ -67,10 +63,9 @@ class RoleService(private val roleRepository: RoleRepository,
         }
 
         val updatedRole = roleRepository.save(role)
-        loadService.loadRoles()
+//        loadService.loadRoles()
 
-        return RoleDto(updatedRole.id!!, updatedRole.roleName!!, updatedRole.date!!, updatedRole.deleted)
-                .apply { comment = updatedRole.comment }
+        return mapRoleDto(updatedRole)
     }
 
     fun getRolesByIds(roleIds: List<Long?>): List<Role> {

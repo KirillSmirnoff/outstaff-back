@@ -1,11 +1,15 @@
 package ru.k2.outstaff.persistence.entity
 
+import org.hibernate.annotations.Cache
+import org.hibernate.annotations.CacheConcurrencyStrategy
 import org.hibernate.annotations.CreationTimestamp
 import java.time.LocalDateTime
 import javax.persistence.*
 
 @Entity
 @Table(name = "roles")
+@Cacheable
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE, region = "Cached-Roles")
 class Role(
 
     @Id

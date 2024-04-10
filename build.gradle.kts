@@ -49,6 +49,8 @@ dependencies {
     /**DATA-BASE*/
     implementation( "org.springframework.boot:spring-boot-starter-data-jpa")
     runtimeOnly("org.postgresql:postgresql")
+    implementation("org.hibernate:hibernate-jcache:5.4.32.Final")
+    runtimeOnly("org.ehcache:ehcache:3.10.8")
     /**LIQUIBASE*/
     implementation("org.liquibase:liquibase-core:4.16.1")
     /**LIQUIBASE-PLUGIN*/

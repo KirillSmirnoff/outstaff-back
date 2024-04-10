@@ -39,12 +39,12 @@ class AdminController(private val roleService: RoleService,
 
     @DeleteMapping("/role/{roleId}")
     @ResponseStatus(HttpStatus.OK)
-    fun deleteRole(@PathVariable("roleId") roleId: String) {
+    fun deleteRole(@PathVariable("roleId") roleId: Long) {
         roleService.remove(roleId)
     }
 
     @PutMapping("/role/{roleId}")
-    fun updateRole(@PathVariable("roleId") roleId: String,
+    fun updateRole(@PathVariable("roleId") roleId: Long,
                    @RequestBody updateRole: RoleUpdateRequest): ResponseEntity<RoleDto> {
         val role = roleService.update(roleId, updateRole)
         return ResponseEntity.ok(role)
