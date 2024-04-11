@@ -24,12 +24,9 @@ class Role(
     @CreationTimestamp
     var date: LocalDateTime? = null,
 
-    @Column(name = "n_delete")
-    var deleted: Int = 0,
-
     @Column(name = "c_comment")
     var comment: String? = null,
 
-    @OneToMany(mappedBy = "role")
+    @OneToMany(mappedBy = "role", cascade = [CascadeType.REMOVE])
     var userRoles: MutableList<UserRole>? = null
 )

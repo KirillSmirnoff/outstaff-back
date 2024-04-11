@@ -7,3 +7,5 @@ databaseChangeLog:
       file: db/changelog/db.changelog-02-02-2023-1.0.sql
   - include:
       file: db/changelog/db.changelog-30-12-2023-1.0.sql
+  - include:
+      file: db/changelog/db.changelog-2024-10-04-1.0.sql

@@ -9,19 +9,20 @@ import ru.k2.outstaff.dto.roles.RoleCreateRequest
 import ru.k2.outstaff.dto.roles.RoleDto
 import ru.k2.outstaff.dto.roles.RoleUpdateRequest
 import ru.k2.outstaff.persistence.entity.Role
-import ru.k2.outstaff.utils.Util
 import java.time.LocalDateTime
 import java.util.stream.Collectors
+import javax.persistence.EntityManagerFactory
 
 @Service
 class RoleService(private val roleRepository: RoleRepository,
-                  @Lazy private val loadService: LoadService) {
+                  @Lazy private val entityManagerFactory: EntityManagerFactory) {
 
-    fun getAll(isDeleted: Boolean): MutableList<RoleDto> {
-        val deleted = if (isDeleted) 1 else 0
+    private val cache = entityManagerFactory.cache
+    var roles = mutableMapOf<String, Long>()
+//    val roles = mutableMapOf("one" to 1L, "two" to 2L)
 
+    fun getAll(): MutableList<RoleDto> {
         return roleRepository.findAll().stream()
-                .filter { r -> r.deleted <= deleted }
                 .map { r -> mapRoleDto(r) }
                 .collect(Collectors.toList())
     }
@@ -39,16 +40,14 @@ class RoleService(private val roleRepository: RoleRepository,
             comment = if (newRole.comment.isNullOrEmpty()) "" else newRole.comment
         }
         val role = roleRepository.save(newRoleEntity)
-
-//        loadService.loadRoles()
-
-        return RoleDto(role.id!!, role.roleName!!, role.date!!, role.deleted, role.comment)
+        updateRoleMap(role)
+        return mapRoleDto(role)
     }
 
     @Transactional
-    fun remove(roleId: Long){
-        roleRepository.deleteById(roleId)
-//        loadService.loadRoles()
+    fun remove(roleId: Long) {
+        roleRepository.deleteById(roleId) //todo много запросов при удалении userRoles каскадно
+        roles.values.remove(roleId)
     }
 
     fun update(roleId: Long, updateRole: RoleUpdateRequest): RoleDto {
@@ -58,12 +57,11 @@ class RoleService(private val roleRepository: RoleRepository,
         role.apply {
             this.comment = updateRole.comment
             this.date = LocalDateTime.now()
-            this.deleted = updateRole.deleted!!
             this.roleName = updateRole.roleName
         }
 
         val updatedRole = roleRepository.save(role)
-//        loadService.loadRoles()
+        updateRoleMap(updatedRole)
 
         return mapRoleDto(updatedRole)
     }
@@ -72,20 +70,28 @@ class RoleService(private val roleRepository: RoleRepository,
         return roleRepository.findByIdIn(roleIds)
     }
 
+    fun getInit() {
+        roleRepository.findAll().stream()
+                .forEach { r -> roles[r.roleName!!] = r.id!! }
+    }
+
+    private fun updateRoleMap(role: Role){
+        roles[role.roleName!!] = role.id!!
+    }
+
     /**
      * Проверяет что роли имеются в системе
      * @see LoadService
      */
-    fun checkRoles(roles: List<String>): List<Long?> {
-        return roles.stream()
-                .filter { role -> Util.roles.containsKey(role) }
-                .map { role -> Util.roles[role] }
+    fun checkRoles(roleNames: List<String>): List<Long?> {
+        return roleNames.stream()
+                .filter { roleName -> roles.containsKey(roleName) }
+                .map { roleName -> roles[roleName] }
                 .collect(Collectors.toList())
     }
 
     private fun mapRoleDto(role: Role): RoleDto {
-        return RoleDto(role.id!!, role.roleName!!, role.date!!, role.deleted
-        ).apply { comment = role.comment }
+        return RoleDto(role.id!!, role.roleName!!, role.date!!).apply { comment = role.comment }
     }
 
 }

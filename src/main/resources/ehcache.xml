@@ -10,7 +10,7 @@
         <ehcache:expiry>
             <ehcache:none/>
         </ehcache:expiry>
-<!--        <ehcache:heap>1000</ehcache:heap>-->
+        <ehcache:heap>1000</ehcache:heap>
     </ehcache:cache-template>
 
 </ehcache:config>
