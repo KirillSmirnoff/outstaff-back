@@ -33,7 +33,7 @@ class Worker(
         @Enumerated(EnumType.STRING)
         var type: WorkerType? = null,
 
-        @ManyToOne
+        @ManyToOne(optional = false)
         @JoinColumn(name = "n_company_id")
         var company: Company? = null,
 )
