@@ -26,9 +26,6 @@ class Worker(
         @Column(name = "c_mail")
         var mail: String? = null,
 
-        @Column(name = "b_status")
-        var status: Boolean? = null,
-
         @Column(name = "n_type")
         @Enumerated(EnumType.STRING)
         var type: WorkerType? = null,

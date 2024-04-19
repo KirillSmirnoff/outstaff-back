@@ -75,7 +75,6 @@ class WorkerService(
             this.bithday = worker.birthday
             this.phone = worker.phone
             this.mail = worker.mail
-            this.status = worker.status
             this.type = worker.type.toString()
             this.company = worker.company?.companyName
         }
