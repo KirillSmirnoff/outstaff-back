@@ -7,6 +7,7 @@ import ru.k2.outstaff.exceptions.UserNotFoundException
 import ru.k2.outstaff.persistence.UserRepository
 import ru.k2.outstaff.persistence.UsersRoleRepository
 import ru.k2.outstaff.dto.users.UserCreateRequest
+import ru.k2.outstaff.dto.users.UserDto
 import ru.k2.outstaff.dto.users.UserRoleDto
 import ru.k2.outstaff.dto.users.UserUpdateRequest
 import ru.k2.outstaff.persistence.entity.User
@@ -21,18 +22,19 @@ class UserService(private val userRepository: UserRepository,
                   private val usersRoleRepository: UsersRoleRepository) {
 
     @Transactional
-    fun getUsers(deleted: Boolean): MutableList<UserRoleDto> {
+    fun getUsers(deleted: Boolean): MutableList<UserDto> {
         val isDeleted = if (deleted) 1 else 0
 
         return userRepository.findAll().stream()
                 .filter { u -> u.deleted <= isDeleted }
-                .map { u -> mapUserToUserRoleDto(u) }
+                .map { u -> mapUserToUserDto(u) }
                 .collect(Collectors.toList())
     }
 
     @Transactional
     fun getUser(id: Long): UserRoleDto{
-        return mapUserToUserRoleDto(userRepository.getById(id))
+       return userRepository.obtainById(id).map { mapUserToUserRoleDto(it) }
+                .orElseThrow{throw UserNotFoundException("user with $id does not exist")}
     }
 
     @Transactional
@@ -50,7 +52,7 @@ class UserService(private val userRepository: UserRepository,
             mail = newUserRequest.mail
         }
         val saveUser = userRepository.save(newUser)
-        val userRoles = roleService.getRolesByIds(listRoleIDs).stream() //todo почему берет не из кэща
+        val userRoles = roleService.getRolesByIds(listRoleIDs).stream()
                 .map {
                     UserRole().apply {
                         this.setUsers(saveUser)
@@ -58,14 +60,12 @@ class UserService(private val userRepository: UserRepository,
                     }
                 }.collect(Collectors.toList())
 
-        val saveUserRoles = usersRoleRepository.saveAll(userRoles)
-
-        saveUser.userRoles?.addAll(saveUserRoles)
+        usersRoleRepository.saveAll(userRoles)
 
         return mapUserToUserRoleDto(saveUser)
     }
 
-    @Transactional //todo проверить  запросы
+    @Transactional
     fun updateUser(userId: Long, updateUser: UserUpdateRequest): UserRoleDto {
         // проверяем что переданные роли валидны/существует в системе
         val listRoleIdToUpdate = roleService.checkRoles(updateUser.roles)
@@ -77,10 +77,8 @@ class UserService(private val userRepository: UserRepository,
                 .orElseThrow { UserNotFoundException("User with id [$userId] not found.") }
 
         // удаляем старые и устанавливаем новый роли/UsersRole
-        deleteExistingRoles(user)
-        saveUsersRole(listRoleIdToUpdate, user)
+        deleteOldAndSetNewUserRoles(listRoleIdToUpdate, user)
 
-        // с ролями закончили теперь обновляем данные пользователя
 
         val updatedUser = user.apply {
             username = updateUser.userName
@@ -89,28 +87,30 @@ class UserService(private val userRepository: UserRepository,
             deleted = updateUser.deleted ?: deleted
         }
 
-        val sacedUser = userRepository.save(updatedUser)
+        val savedUser = userRepository.save(updatedUser)
 
-        return mapUserToUserRoleDto(sacedUser)
+        return mapUserToUserRoleDto(savedUser)
     }
 
     @Transactional
     fun removeUser(userId: Long){
         println("Start remove user with id - $userId")
-        userRepository.removeById(userId)
+//        userRepository.removeById(userId) // если что можно выполнить одним JPQL запросом
+        val user = userRepository.findById(userId)
+                .orElseThrow { throw UserNotFoundException("user with $userId does not exist") }
+
+        userRepository.save(user.also { it.deleted = 1 })
     }
 
-    private fun deleteExistingRoles(user: User) {
+    private fun deleteOldAndSetNewUserRoles(listRoleIdToUpdate: List<Long?>, user: User) {
         val listUserRolesIds = user.userRoles!!.stream()
                 .map { role -> role.id }
                 .collect(Collectors.toList())
 
         user.userRoles!!.clear()
         usersRoleRepository.deleteByIdIn(listUserRolesIds)
-    }
 
-    private fun saveUsersRole(listRoleIDs: List<Long?>, user: User) {
-        val userRoles = roleService.getRolesByIds(listRoleIDs).stream()
+        val userRoles = roleService.getRolesByIds(listRoleIdToUpdate).stream()
                 .map {
                     UserRole().apply {
                         this.setUsers(user)
@@ -133,6 +133,18 @@ class UserService(private val userRepository: UserRepository,
             roles = user.userRoles!!.stream()
                     .map { r -> r.role!!.roleName }
                     .collect(Collectors.toList()) as List<String>?
+        }
+    }
+
+    private fun mapUserToUserDto(user: User): UserDto {
+        return UserDto().apply {
+            id = user.id
+            userName = user.username
+            password = "*****"
+            login = user.login
+            phone = user.phone
+            mail = user.mail
+            status = if (user.deleted > 0) "REMOVED" else "ACTIVE"
         }
     }
 }

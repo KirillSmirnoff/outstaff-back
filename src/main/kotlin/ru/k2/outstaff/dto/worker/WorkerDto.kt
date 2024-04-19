@@ -12,5 +12,5 @@ data class WorkerDto
         var mail: String? = null,
         var status: Boolean? = null,
         var type: String? = null,
-        var company: Company? = null,
+        var company: String? = null,
 )

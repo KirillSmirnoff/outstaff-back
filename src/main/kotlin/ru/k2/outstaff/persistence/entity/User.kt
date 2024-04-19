@@ -1,6 +1,5 @@
 package ru.k2.outstaff.persistence.entity
 
-import org.hibernate.annotations.BatchSize
 import javax.persistence.*
 
 @Entity
@@ -31,7 +30,6 @@ class User(
         var deleted: Int = 0,
 
         @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
-        @BatchSize(size = 5)
         var userRoles: MutableList<UserRole>? = mutableListOf()
 
 )

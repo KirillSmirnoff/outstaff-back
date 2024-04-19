@@ -18,7 +18,7 @@ class WorkerService(
 ) {
 
     fun getWorkers(): List<WorkerDto> {
-        return workerRepository.findAll().stream()
+        return workerRepository.getAll().stream()
                 .map { mapWorkerDto(it) }
                 .collect(Collectors.toList())
     }
@@ -77,7 +77,7 @@ class WorkerService(
             this.mail = worker.mail
             this.status = worker.status
             this.type = worker.type.toString()
-            this.company = worker.company
+            this.company = worker.company?.companyName
         }
     }
 

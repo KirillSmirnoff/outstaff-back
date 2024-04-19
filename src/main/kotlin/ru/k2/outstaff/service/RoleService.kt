@@ -17,9 +17,7 @@ import javax.persistence.EntityManagerFactory
 class RoleService(private val roleRepository: RoleRepository,
                   @Lazy private val entityManagerFactory: EntityManagerFactory) {
 
-    private val cache = entityManagerFactory.cache
     var roles = mutableMapOf<String, Long>()
-//    val roles = mutableMapOf("one" to 1L, "two" to 2L)
 
     fun getAll(): MutableList<RoleDto> {
         return roleRepository.findAll().stream()
@@ -46,7 +44,7 @@ class RoleService(private val roleRepository: RoleRepository,
 
     @Transactional
     fun remove(roleId: Long) {
-        roleRepository.deleteById(roleId) //todo много запросов при удалении userRoles каскадно
+        roleRepository.deleteById(roleId)
         roles.values.remove(roleId)
     }
 
@@ -67,7 +65,7 @@ class RoleService(private val roleRepository: RoleRepository,
     }
 
     fun getRolesByIds(roleIds: List<Long?>): List<Role> {
-        return roleRepository.findByIdIn(roleIds)
+        return roleRepository.findAllById(roleIds)
     }
 
     fun getInit() {

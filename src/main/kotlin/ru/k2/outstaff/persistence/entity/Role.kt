@@ -27,6 +27,6 @@ class Role(
     @Column(name = "c_comment")
     var comment: String? = null,
 
-    @OneToMany(mappedBy = "role", cascade = [CascadeType.REMOVE])
+    @OneToMany(mappedBy = "role")
     var userRoles: MutableList<UserRole>? = null
 )
