@@ -27,8 +27,7 @@ class RoleService(private val roleRepository: RoleRepository,
 
     @Transactional(readOnly = true)
     fun getRole(id: Long): RoleDto {
-        return roleRepository.getById(id)
-                .let { mapRoleDto(it) }
+        return mapRoleDto(roleRepository.getById(id))
     }
 
     @Transactional
