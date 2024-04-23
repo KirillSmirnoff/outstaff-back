@@ -7,6 +7,7 @@ import ru.k2.outstaff.persistence.CompanyRepository
 import ru.k2.outstaff.persistence.WorkerRepository
 import ru.k2.outstaff.dto.worker.WorkerCreateRequest
 import ru.k2.outstaff.dto.worker.WorkerDto
+import ru.k2.outstaff.exceptions.CompanyNotFoundException
 import ru.k2.outstaff.persistence.entity.Worker
 import ru.k2.outstaff.utils.WorkerType
 import java.util.stream.Collectors
@@ -26,13 +27,13 @@ class WorkerService(
     fun getWorker(workerId: Long): WorkerDto {
         return workerRepository.findById(workerId)
                 .map { mapWorkerDto(it) }
-                .orElseThrow { throw WorkerNotFoundException() }
+                .orElseThrow { throw WorkerNotFoundException("Worker with id [$workerId] not found") }
     }
 
     @Transactional
     fun createWorker(workerCreateRequest: WorkerCreateRequest): WorkerDto {
         val company = companyRepository.findByCompanyName(workerCreateRequest.company!!)
-                .orElseGet { throw WorkerNotFoundException() }
+                .orElseGet { throw CompanyNotFoundException("Error creating worker. [${workerCreateRequest.company}] company does not exist") }
 
         val worker = Worker().apply {
             this.name = workerCreateRequest.name
@@ -53,10 +54,10 @@ class WorkerService(
     @Transactional
     fun updateWorker(workerId: Long, updateWorker: WorkerCreateRequest): WorkerDto {
         val worker = workerRepository.findById(workerId)
-                .orElseThrow { throw WorkerNotFoundException()}
+                .orElseThrow { throw WorkerNotFoundException("Worker with id [$workerId] not found.")}
 
         val company = companyRepository.findByCompanyName(updateWorker.company!!)
-                .orElseThrow { throw WorkerNotFoundException() }
+                .orElseThrow { throw CompanyNotFoundException("Error updating worker. [${updateWorker.company}] company does not exist") }
 
         worker.name = updateWorker.name
         worker.birthday = updateWorker.bithday

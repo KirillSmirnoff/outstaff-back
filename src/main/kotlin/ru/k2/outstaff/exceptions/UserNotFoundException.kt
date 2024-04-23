@@ -1,4 +1,4 @@
 package ru.k2.outstaff.exceptions
 
-class UserNotFoundException(s: String) : RuntimeException(s) {
+class UserNotFoundException(s: String) : BusinessException(s) {
 }

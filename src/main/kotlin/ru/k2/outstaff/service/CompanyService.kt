@@ -16,7 +16,7 @@ class CompanyService(val companyRepository: CompanyRepository) {
     fun getCompanyById(id: Long): CompanyDto {
         return companyRepository.findById(id)
                 .map {c -> mapCompanyDto(c)}
-                .orElseGet { throw CompanyNotFoundException() }
+                .orElseGet { throw CompanyNotFoundException("Worker with id [$id] not found.") }
     }
 
     fun getAll(): List<CompanyDto> {
@@ -24,7 +24,6 @@ class CompanyService(val companyRepository: CompanyRepository) {
                 .stream()
                 .map { c -> mapCompanyDto(c) }
                 .collect(Collectors.toList())
-                .orEmpty()
     }
 
     fun createCompany(company: CompanyRequest): CompanyDto {
