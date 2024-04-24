@@ -4,11 +4,11 @@ import org.springframework.context.annotation.Lazy
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import ru.k2.outstaff.exceptions.RoleNotFoundException
-import ru.k2.outstaff.persistence.RoleRepository
+import ru.k2.outstaff.repository.RoleRepository
 import ru.k2.outstaff.dto.roles.RoleCreateRequest
 import ru.k2.outstaff.dto.roles.RoleDto
 import ru.k2.outstaff.dto.roles.RoleUpdateRequest
-import ru.k2.outstaff.persistence.entity.Role
+import ru.k2.outstaff.repository.entity.Role
 import java.time.LocalDateTime
 import java.util.stream.Collectors
 import javax.persistence.EntityManagerFactory

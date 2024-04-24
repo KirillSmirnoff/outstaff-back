@@ -3,12 +3,12 @@ package ru.k2.outstaff.service
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import ru.k2.outstaff.exceptions.WorkerNotFoundException
-import ru.k2.outstaff.persistence.CompanyRepository
-import ru.k2.outstaff.persistence.WorkerRepository
+import ru.k2.outstaff.repository.CompanyRepository
+import ru.k2.outstaff.repository.WorkerRepository
 import ru.k2.outstaff.dto.worker.WorkerCreateRequest
 import ru.k2.outstaff.dto.worker.WorkerDto
 import ru.k2.outstaff.exceptions.CompanyNotFoundException
-import ru.k2.outstaff.persistence.entity.Worker
+import ru.k2.outstaff.repository.entity.Worker
 import ru.k2.outstaff.utils.WorkerType
 import java.util.stream.Collectors
 

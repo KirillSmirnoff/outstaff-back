@@ -1,10 +1,10 @@
-package ru.k2.outstaff.persistence
+package ru.k2.outstaff.repository
 
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Modifying
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
-import ru.k2.outstaff.persistence.entity.User
+import ru.k2.outstaff.repository.entity.User
 import java.util.Optional
 
 interface UserRepository: JpaRepository<User, Long>{

@@ -1,6 +1,5 @@
 package ru.k2.outstaff.dto.worker
 
-import ru.k2.outstaff.persistence.entity.Company
 import java.time.LocalDate
 
 data class WorkerDto

@@ -1,4 +1,4 @@
-package ru.k2.outstaff.persistence.entity
+package ru.k2.outstaff.repository.entity
 
 import javax.persistence.*
 

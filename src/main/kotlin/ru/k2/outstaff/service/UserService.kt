@@ -4,14 +4,14 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
 import ru.k2.outstaff.exceptions.RoleNotFoundException
 import ru.k2.outstaff.exceptions.UserNotFoundException
-import ru.k2.outstaff.persistence.UserRepository
-import ru.k2.outstaff.persistence.UsersRoleRepository
+import ru.k2.outstaff.repository.UserRepository
+import ru.k2.outstaff.repository.UsersRoleRepository
 import ru.k2.outstaff.dto.users.UserCreateRequest
 import ru.k2.outstaff.dto.users.UserDto
 import ru.k2.outstaff.dto.users.UserRoleDto
 import ru.k2.outstaff.dto.users.UserUpdateRequest
-import ru.k2.outstaff.persistence.entity.User
-import ru.k2.outstaff.persistence.entity.UserRole
+import ru.k2.outstaff.repository.entity.User
+import ru.k2.outstaff.repository.entity.UserRole
 import java.util.stream.Collectors
 import javax.transaction.Transactional
 

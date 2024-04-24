@@ -1,8 +1,7 @@
-package ru.k2.outstaff.persistence.entity
+package ru.k2.outstaff.repository.entity
 
 import ru.k2.outstaff.utils.WorkerType
 import java.time.LocalDate
-import java.util.*
 import javax.persistence.*
 
 @Entity

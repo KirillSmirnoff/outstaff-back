@@ -3,10 +3,10 @@ package ru.k2.outstaff.service
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import ru.k2.outstaff.exceptions.CompanyNotFoundException
-import ru.k2.outstaff.persistence.CompanyRepository
+import ru.k2.outstaff.repository.CompanyRepository
 import ru.k2.outstaff.dto.company.CompanyRequest
 import ru.k2.outstaff.dto.company.CompanyDto
-import ru.k2.outstaff.persistence.entity.Company
+import ru.k2.outstaff.repository.entity.Company
 import java.util.stream.Collectors
 
 @Service

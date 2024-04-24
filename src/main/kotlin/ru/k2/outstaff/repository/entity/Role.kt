@@ -1,4 +1,4 @@
-package ru.k2.outstaff.persistence.entity
+package ru.k2.outstaff.repository.entity
 
 import org.hibernate.annotations.Cache
 import org.hibernate.annotations.CacheConcurrencyStrategy

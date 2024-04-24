@@ -18,8 +18,8 @@ liquibase {
         this.arguments = mapOf(
                 "logLevel" to "info",
                 "changeLogFile" to "src/main/resources/db/generated/generated_changelog.postgres.sql",
-                "url" to "jdbc:postgresql://localhost:5432/hh",
-                "username" to "postgres",
+                "url" to "jdbc:postgresql://localhost:5433/hh",
+                "username" to "k2",
                 "password" to "0",
                 "driver" to "org.postgresql.Driver"
         )
