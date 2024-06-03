@@ -1,0 +1,28 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    username: 'test'
+    password: 'test'
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties.hibernate:
+      javax:
+        cache:
+          uri: classpath:ehcache.xml
+      show_sql: true
+      format_sql: true
+      generate_statistics: true # not production
+      cache:
+        use_query_cache: false
+        use_second_level_cache: false
+        region:
+          factory_class: org.hibernate.cache.jcache.internal.JCacheRegionFactory
+logging:
+  level:
+    org:
+      hibernate:
+#        stat: # отдельно включить только статистику
+        type: trace
+#    org.hibernate.cache.spi.support.AbstractReadWriteAccess: trace
