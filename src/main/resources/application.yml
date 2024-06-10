@@ -23,7 +23,9 @@ spring:
           uri: classpath:ehcache.xml
       show_sql: true
       format_sql: true
+#      generate_statistics: true # not production //only dev
       cache:
+        use_query_cache: true
         use_second_level_cache: true
         region:
           factory_class: org.hibernate.cache.jcache.internal.JCacheRegionFactory
@@ -32,3 +34,5 @@ spring:
 #    org:
 #      hibernate:
 #        type: trace
+#    org.hibernate.cache.spi.support.AbstractReadWriteAccess: trace
+#    //todo https://stackoverflow.com/questions/31585698/spring-boot-jpa2-hibernate-enable-second-level-cache
