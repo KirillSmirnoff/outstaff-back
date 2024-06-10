@@ -61,8 +61,9 @@ class AdminController(private val roleService: RoleService,
     }
 
     @GetMapping("/user/{userId}")
-    fun getUser(@PathVariable("userId") id: Long): ResponseEntity<UserRoleDto> {
-        val user = userService.getUser(id)
+    fun getUser(@PathVariable("userId") id: Long,
+                @RequestParam(defaultValue = "false") deleted: Boolean): ResponseEntity<UserRoleDto> {
+        val user = userService.getUser(id, deleted)
         return ResponseEntity.ok(user)
     }
 

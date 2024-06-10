@@ -32,9 +32,13 @@ class UserService(private val userRepository: UserRepository,
     }
 
     @Transactional
-    fun getUser(id: Long): UserRoleDto{
-       return userRepository.obtainById(id).map { mapUserToUserRoleDto(it) }
-                .orElseThrow{throw UserNotFoundException("user with $id does not exist")}
+    fun getUser(id: Long, deleted: Boolean): UserRoleDto{
+        val isDeleted = if (deleted) 1 else 0
+
+        return userRepository.obtainById(id)
+                .filter { u -> u.deleted <= isDeleted }
+                .map { mapUserToUserRoleDto(it) }
+                .orElseThrow { throw UserNotFoundException("user with $id does not exist") }
     }
 
     @Transactional
@@ -99,7 +103,10 @@ class UserService(private val userRepository: UserRepository,
         val user = userRepository.findById(userId)
                 .orElseThrow { throw UserNotFoundException("user with $userId does not exist") }
 
-        userRepository.save(user.also { it.deleted = 1 })
+        if (user.deleted == 0) {
+            user.deleted = 1
+            userRepository.save(user)
+        } else { throw UserNotFoundException("user with $userId does not exist") }
     }
 
     private fun deleteOldAndSetNewUserRoles(listRoleIdToUpdate: List<Long?>, user: User) {
